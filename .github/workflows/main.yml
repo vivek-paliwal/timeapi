@@ -9,7 +9,7 @@ jobs:
   update-date-time:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # This line is crucial for the action to have write access
+      contents: write  # Grants the workflow write access
 
     steps:
       - name: Checkout repository
@@ -17,15 +17,12 @@ jobs:
 
       - name: Update date-time JSON (UTC)
         run: |
-          # Get current UTC time
           YEAR=$(date -u '+%Y')
           MONTH=$(date -u '+%m')
           DAY=$(date -u '+%d')
           HOUR=$(date -u '+%H')
 
-          # Generate JSON
           echo "{\"year\": \"$YEAR\", \"month\": \"$MONTH\", \"day\": \"$DAY\", \"hour\": \"$HOUR\"}" > date.json
-          cat date.json
 
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
