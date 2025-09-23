@@ -15,11 +15,13 @@ jobs:
 
       - name: Update date-time JSON (UTC)
         run: |
+          # Get current UTC time
           YEAR=$(date -u '+%Y')
           MONTH=$(date -u '+%m')
           DAY=$(date -u '+%d')
           HOUR=$(date -u '+%H')
 
+          # Generate JSON
           echo "{\"year\": $YEAR, \"month\": \"$MONTH\", \"day\": $DAY, \"hour\": \"$HOUR\"}" > date.json
           cat date.json
 
