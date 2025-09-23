@@ -1,0 +1,40 @@
+name: Update Date & Time JSON
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'   # Every 2 hours UTC
+  workflow_dispatch:         # Allows manual trigger
+
+jobs:
+  update-date-time:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Update date-time JSON
+        run: |
+          # Current IST time (UTC +5:30)
+          YEAR=$(date -d '+5 hours 30 minutes' '+%Y')
+          MONTH=$(date -d '+5 hours 30 minutes' '+%m')
+          DAY=$(date -d '+5 hours 30 minutes' '+%d')
+          HOUR=$(date -d '+5 hours 30 minutes' '+%H')
+
+          # Generate JSON
+          cat > date.json <<EOF
+          {
+            "year": $YEAR,
+            "month": "$MONTH",
+            "day": $DAY,
+            "hour": "$HOUR"
+          }
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add date.json
+          git commit -m "Update date-time JSON [skip ci]" || echo "No changes to commit"
+          git push
