@@ -2,7 +2,7 @@ name: Update Date & Time JSON
 
 on:
   schedule:
-    - cron: '0 */2 * * *'   # Every 2 hours UTC
+    - cron: '0 */2 * * *'  # Every 2 hours UTC
   workflow_dispatch:
 
 jobs:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update date-time JSON (UTC)
         run: |
@@ -22,15 +24,11 @@ jobs:
           HOUR=$(date -u '+%H')
 
           # Generate JSON
-          echo "{\"year\": $YEAR, \"month\": \"$MONTH\", \"day\": $DAY, \"hour\": \"$HOUR\"}" > date.json
+          echo "{\"year\": \"$YEAR\", \"month\": \"$MONTH\", \"day\": \"$DAY\", \"hour\": \"$HOUR\"}" > date.json
           cat date.json
 
-      - name: Commit and push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add date.json
-          git diff --cached --quiet || git commit -m "Update date-time JSON [skip ci]"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update date-time JSON [skip ci]"
+          file_pattern: "date.json"
